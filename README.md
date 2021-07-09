@@ -31,7 +31,7 @@ compress_pdf figures-2 &
 wait
 
 # Remove the write part of each figure's page
-for f in `ls _deep-*.pdf`; do
+for f in `ls figures-*.pdf`; do
     pdfcrop $f $f  &  # pdfcrop came with my latex install. It's this: https://ctan.org/pkg/pdfcrop
 done
 wait
