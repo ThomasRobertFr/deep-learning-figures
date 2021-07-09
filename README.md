@@ -8,6 +8,40 @@ These figures have been made mostly during [my PhD](https://www.thomas-robert.fr
 These figures are used in [my PhD thesis](https://hal.archives-ouvertes.fr/tel-02309812) if you want to see them used in context and want a full legend.
 
 
+**How I use PowerPoint figures in my LaTeX documents?**
+
+For each paper, I have an `images/figures.pptx` file that contains all my PowerPoint figures. Regularly, I export this PowerPoint into a `images/figures.pdf` file. I also have a script `images/process_figures.sh` and run it after each PDF export:
+
+```bash
+# Split the PDF into pages
+pdfsplit.py figures.pdf
+# pdfsplit.py is included in this repo. It is designed for Mac. For Linux or Windows, you can find equivalents.
+
+# Remove pages that I keep in the PPTX but I don't actually want to use
+rm figures-3.pdf
+rm figures-4.pdf
+
+# Compress some pages if needed, when they contain big images, you need 
+compress_pdf () {
+    gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/printer -dCompatibilityLevel=1.4 -sOutputFile=$1-comp.pdf $1.pdf
+    mv $1-comp.pdf $1.pdf
+}
+compress_pdf figures-1 &
+compress_pdf figures-2 &
+wait
+
+# Remove the write part of each figure's page
+for f in `ls _deep-*.pdf`; do
+    pdfcrop $f $f  &  # pdfcrop came with my latex install. It's this: https://ctan.org/pkg/pdfcrop
+done
+wait
+
+# Rename into more usable names
+mv figures-1.pdf intro_CV.pdf
+mv figures-2.pdf intro_ML.pdf
+# ...
+```
+
 
 ## General figures
 
